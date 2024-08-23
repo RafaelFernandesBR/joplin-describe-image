@@ -28,13 +28,10 @@ jobs:
     - name: Compile the plugin
       run: npm run dist
 
-    - name: Archive compiled files
-      run: zip -r plugin.zip ./publish/com.describeimage.jpl
-
     - uses: actions/upload-artifact@v3
       with:
         name: compiled_plugin
-        path: ./plugin.zip
+        path: ./publish/com.describeimage.jpl
 
   upload_release:
     runs-on: ubuntu-latest
@@ -54,6 +51,6 @@ jobs:
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        files: plugin.zip
+        files: ./publish/com.describeimage.jpl
         fail_on_unmatched_files: true
         prerelease: ${{ contains(github.ref, '-') }}
