@@ -51,6 +51,6 @@ jobs:
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        files: compiled_plugin/com.describeimage.jpl
+        files: publish/com.describeimage.jpl
         fail_on_unmatched_files: true
         prerelease: ${{ contains(github.ref, '-') }}
