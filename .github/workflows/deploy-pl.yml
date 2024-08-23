@@ -1,0 +1,59 @@
+name: Build and Release Plugin
+
+on:
+  push:
+    tags: ["v*"]  # Dispara para qualquer tag que comece com 'v'
+    branches: [ main , develop ]
+
+  pull_request:
+    branches: [ main, develop ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Compile the plugin
+      run: npm run dist
+
+    - name: Archive compiled files
+      run: zip -r plugin.zip ./publish/com.describeimage.jpl
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: compiled_plugin
+        path: ./plugin.zip
+
+  upload_release:
+    runs-on: ubuntu-latest
+    if: ${{ startsWith(github.ref, 'refs/tags/') }}
+    needs: build
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Download release files
+      uses: actions/download-artifact@v3
+      with:
+        name: compiled_plugin
+
+    - name: Display structure of downloaded files
+      run: ls -R
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: plugin.zip
+        fail_on_unmatched_files: true
+        prerelease: ${{ contains(github.ref, '-') }}
