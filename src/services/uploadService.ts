@@ -53,5 +53,5 @@ async function getRecognitionResult(requestId: string): Promise<any> {
         }
     }
 
-    throw new Error("Tempo limite de 90 segundos excedido");
+    throw new Error("Tempo limite excedido");
 }
