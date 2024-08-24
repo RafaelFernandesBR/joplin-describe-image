@@ -38,7 +38,9 @@ async function uploadImage(base64Image: string, language: string, beMyAI: boolea
 }
 
 async function getRecognitionResult(requestId: string): Promise<any> {
-    while (true) {
+    const maxRetries = 90 / 5;
+
+    for (let i = 0; i < maxRetries; i++) {
         const response = await axios.post(resultUrl, new URLSearchParams({ id: requestId }));
         const result = response.data;
 
@@ -50,4 +52,6 @@ async function getRecognitionResult(requestId: string): Promise<any> {
             throw new Error("Erro ao obter o resultado: " + result.status);
         }
     }
+
+    throw new Error("Tempo limite de 90 segundos excedido");
 }
